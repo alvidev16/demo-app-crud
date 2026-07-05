@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="demo-app-crud.client/demo-app-crud.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="demo-app-crud.Server/demo-app-crud.Server.csproj" />
+</Solution>
