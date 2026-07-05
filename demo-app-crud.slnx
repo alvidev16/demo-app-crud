@@ -1,4 +1,13 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Demo.DAL/Demo.DAL.csproj" />
+    <Project Path="src/Demo.Domain/Demo.Domain.csproj" />
+    <Project Path="src/Demo.Services/Demo.Services.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Demo.Api.Tests/Demo.Api.Tests.csproj" />
+    <Project Path="tests/Demo.Services.Tests/Demo.Services.Tests.csproj" />
+  </Folder>
   <Project Path="demo-app-crud.client/demo-app-crud.client.esproj">
     <Build />
     <Deploy />
