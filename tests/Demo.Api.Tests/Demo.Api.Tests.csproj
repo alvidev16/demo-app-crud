@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\src\Demo.DAL\Demo.DAL.csproj" />
     <ProjectReference Include="..\..\src\Demo.Services\Demo.Services.csproj" />
     <ProjectReference Include="..\..\src\Demo.Domain\Demo.Domain.csproj" />
+    <ProjectReference Include="..\Demo.TestSupport\Demo.TestSupport.csproj" />
   </ItemGroup>
 
 </Project>

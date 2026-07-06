@@ -34,7 +34,7 @@ public class ProductServiceTests
         result.Sku.Should().Be("SKU-001");
         result.Price.Should().Be(19.99m);
         result.Id.Should().NotBeEmpty();
-        _repo.Verify(r => r.AddAsync(It.Is<Product>(p => p.Sku == "SKU-001"), It.IsAny<CancellationToken>()), Times.Once);
+        _repo.Verify(r => r.AddAsync(It.Is<Product>(p => p.Sku.Value == "SKU-001"), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

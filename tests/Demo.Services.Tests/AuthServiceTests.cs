@@ -34,7 +34,7 @@ public class AuthServiceTests
         result.Email.Should().Be("new@demo.com");
         result.Role.Should().Be(Roles.User);
         _users.Verify(r => r.AddAsync(
-            It.Is<User>(u => u.PasswordHash == "HASHED" && u.Email == "new@demo.com"),
+            It.Is<User>(u => u.PasswordHash == "HASHED" && u.Email.Value == "new@demo.com"),
             It.IsAny<CancellationToken>()), Times.Once);
     }
 

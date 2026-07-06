@@ -1,4 +1,4 @@
-using Demo.Domain.Exceptions;
+using Demo.Domain.ValueObjects;
 
 namespace Demo.Domain.Entities;
 
@@ -9,13 +9,13 @@ public static class Roles
 }
 
 /// <summary>
-/// Application user. Passwords are never stored in plain text: the entity only
-/// ever holds an already-computed hash.
+/// Application user. The email is an <see cref="ValueObjects.Email"/> value object
+/// (validated + normalized); passwords are never stored in plain text.
 /// </summary>
 public class User
 {
     public Guid Id { get; private set; }
-    public string Email { get; private set; } = string.Empty;
+    public Email Email { get; private set; } = null!;
     public string PasswordHash { get; private set; } = string.Empty;
     public string Role { get; private set; } = Roles.User;
     public DateTime CreatedAt { get; private set; }
@@ -25,37 +25,19 @@ public class User
 
     public static User Create(string email, string passwordHash, string role = Roles.User)
     {
-        var errors = new Dictionary<string, string>();
-
-        if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
-            errors[nameof(Email)] = "A valid email is required.";
+        // Email.Create enforces format + normalization; throws ValidationException if invalid.
+        var emailVo = Email.Create(email);
 
         if (string.IsNullOrWhiteSpace(passwordHash))
-            errors[nameof(passwordHash)] = "Password hash is required.";
-
-        if (errors.Count > 0)
-            throw new ValidationException(errors);
+            throw new Exceptions.ValidationException(nameof(passwordHash), "Password hash is required.");
 
         return new User
         {
             Id = Guid.NewGuid(),
-            Email = email.Trim().ToLowerInvariant(),
+            Email = emailVo,
             PasswordHash = passwordHash,
             Role = string.IsNullOrWhiteSpace(role) ? Roles.User : role,
             CreatedAt = DateTime.UtcNow
         };
-    }
-
-    private static bool IsValidEmail(string email)
-    {
-        try
-        {
-            var addr = new System.Net.Mail.MailAddress(email);
-            return addr.Address == email.Trim();
-        }
-        catch
-        {
-            return false;
-        }
     }
 }

@@ -8,6 +8,7 @@
     <Project Path="tests/Demo.Api.Tests/Demo.Api.Tests.csproj" />
     <Project Path="tests/Demo.DAL.Tests/Demo.DAL.Tests.csproj" />
     <Project Path="tests/Demo.Services.Tests/Demo.Services.Tests.csproj" />
+    <Project Path="tests/Demo.TestSupport/Demo.TestSupport.csproj" />
   </Folder>
   <Project Path="demo-app-crud.client/demo-app-crud.client.esproj">
     <Build />

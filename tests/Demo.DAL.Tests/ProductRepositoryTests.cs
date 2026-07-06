@@ -1,5 +1,6 @@
 using Demo.DAL.Repositories;
 using Demo.Domain.Entities;
+using Demo.TestSupport;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,7 @@ public class ProductRepositoryTests : SqliteTestBase
         var stored = await NewRepository().GetByIdAsync(product.Id);
         stored.Should().NotBeNull();
         stored!.Name.Should().Be("Keyboard");
-        stored.Price.Should().Be(49.90m);
+        stored.Price.Amount.Should().Be(49.90m);
     }
 
     [Fact]
@@ -32,7 +33,7 @@ public class ProductRepositoryTests : SqliteTestBase
         var found = await NewRepository().GetBySkuAsync("SKU-MO-1");
 
         found.Should().NotBeNull();
-        found!.Sku.Should().Be("SKU-MO-1");
+        found!.Sku.Value.Should().Be("SKU-MO-1");
     }
 
     [Fact]
@@ -47,16 +48,14 @@ public class ProductRepositoryTests : SqliteTestBase
     public async Task GetAllAsync_ReturnsNewestFirst()
     {
         var repo = NewRepository();
-        var older = Product.Create("Older", "SKU-A", 1m, 1, "Cat");
-        await repo.AddAsync(older);
+        await repo.AddAsync(new ProductBuilder().WithName("Older").WithSku("SKU-A").Build());
         await Task.Delay(5); // ensure a distinct CreatedAt
-        var newer = Product.Create("Newer", "SKU-B", 2m, 2, "Cat");
-        await repo.AddAsync(newer);
+        await repo.AddAsync(new ProductBuilder().WithName("Newer").WithSku("SKU-B").Build());
 
         var all = await NewRepository().GetAllAsync();
 
         all.Should().HaveCount(2);
-        all[0].Sku.Should().Be("SKU-B"); // ordered by CreatedAt desc
+        all[0].Sku.Value.Should().Be("SKU-B"); // ordered by CreatedAt desc
     }
 
     [Fact]
@@ -72,7 +71,7 @@ public class ProductRepositoryTests : SqliteTestBase
 
         var reloaded = await NewRepository().GetByIdAsync(product.Id);
         reloaded!.Name.Should().Be("After");
-        reloaded.Price.Should().Be(99m);
+        reloaded.Price.Amount.Should().Be(99m);
         reloaded.Category.Should().Be("NewCat");
     }
 
@@ -94,9 +93,9 @@ public class ProductRepositoryTests : SqliteTestBase
     public async Task UniqueIndex_RejectsDuplicateSku()
     {
         var repo = NewRepository();
-        await repo.AddAsync(Product.Create("First", "SKU-DUP", 10m, 1, "Cat"));
+        await repo.AddAsync(new ProductBuilder().WithSku("SKU-DUP").Build());
 
-        var duplicate = Product.Create("Second", "SKU-DUP", 20m, 2, "Cat");
+        var duplicate = new ProductBuilder().WithSku("SKU-DUP").Build();
         var act = async () => await NewRepository().AddAsync(duplicate);
 
         // The database-level unique index must reject the duplicate SKU.

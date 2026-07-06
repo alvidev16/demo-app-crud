@@ -1,6 +1,8 @@
 using Demo.DAL.Data;
 using Demo.Domain.Entities;
+using Demo.Domain.Exceptions;
 using Demo.Domain.Interfaces;
+using Demo.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace Demo.DAL.Repositories;
@@ -21,8 +23,15 @@ public class ProductRepository : IProductRepository
     public async Task<Product?> GetByIdAsync(Guid id, CancellationToken ct = default) =>
         await _db.Products.FirstOrDefaultAsync(p => p.Id == id, ct);
 
-    public async Task<Product?> GetBySkuAsync(string sku, CancellationToken ct = default) =>
-        await _db.Products.FirstOrDefaultAsync(p => p.Sku == sku, ct);
+    public async Task<Product?> GetBySkuAsync(string sku, CancellationToken ct = default)
+    {
+        // Build the value object for the query; an invalid SKU simply matches nothing.
+        Sku skuVo;
+        try { skuVo = Sku.Create(sku); }
+        catch (ValidationException) { return null; }
+
+        return await _db.Products.FirstOrDefaultAsync(p => p.Sku == skuVo, ct);
+    }
 
     public async Task AddAsync(Product product, CancellationToken ct = default)
     {

@@ -1,5 +1,6 @@
 using Demo.DAL.Repositories;
 using Demo.Domain.Entities;
+using Demo.TestSupport;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +20,7 @@ public class UserRepositoryTests : SqliteTestBase
 
         var stored = await NewRepository().GetByIdAsync(user.Id);
         stored.Should().NotBeNull();
-        stored!.Email.Should().Be("person@demo.com");
+        stored!.Email.Value.Should().Be("person@demo.com");
         stored.Role.Should().Be(Roles.Admin);
     }
 
@@ -32,7 +33,7 @@ public class UserRepositoryTests : SqliteTestBase
         var found = await NewRepository().GetByEmailAsync("find@demo.com");
 
         found.Should().NotBeNull();
-        found!.Email.Should().Be("find@demo.com");
+        found!.Email.Value.Should().Be("find@demo.com");
     }
 
     [Fact]
@@ -47,9 +48,9 @@ public class UserRepositoryTests : SqliteTestBase
     public async Task UniqueIndex_RejectsDuplicateEmail()
     {
         var repo = NewRepository();
-        await repo.AddAsync(User.Create("dup@demo.com", "HASH1"));
+        await repo.AddAsync(new UserBuilder().WithEmail("dup@demo.com").Build());
 
-        var duplicate = User.Create("dup@demo.com", "HASH2");
+        var duplicate = new UserBuilder().WithEmail("dup@demo.com").Build();
         var act = async () => await NewRepository().AddAsync(duplicate);
 
         await act.Should().ThrowAsync<DbUpdateException>();

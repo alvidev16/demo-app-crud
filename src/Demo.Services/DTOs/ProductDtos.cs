@@ -14,7 +14,7 @@ public record ProductDto(
     DateTime UpdatedAt)
 {
     public static ProductDto FromEntity(Product p) =>
-        new(p.Id, p.Name, p.Sku, p.Price, p.Stock, p.Category, p.CreatedAt, p.UpdatedAt);
+        new(p.Id, p.Name, p.Sku.Value, p.Price.Amount, p.Stock, p.Category, p.CreatedAt, p.UpdatedAt);
 }
 
 /// <summary>Payload to create a product.</summary>
