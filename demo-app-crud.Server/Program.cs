@@ -55,9 +55,9 @@ builder.Services.AddSwaggerGen(options =>
         In = ParameterLocation.Header,
         Description = "Enter the JWT returned by /api/auth/login."
     });
-    options.AddSecurityRequirement(_ => new OpenApiSecurityRequirement
+    options.AddSecurityRequirement(doc => new OpenApiSecurityRequirement
     {
-        { new OpenApiSecuritySchemeReference("Bearer", null, null), new List<string>() }
+        { new OpenApiSecuritySchemeReference("Bearer", doc, null), new List<string>() }
     });
 });
 
