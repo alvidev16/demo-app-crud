@@ -111,16 +111,18 @@ Errors are returned as RFC-7807 `ProblemDetails`; validation failures include an
 
 ### Prerequisites
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
-- [Node.js 18+](https://nodejs.org/)
+- [Node.js 20+](https://nodejs.org/) (Vite 8 requires Node 20.19+ / 22.12+)
 
 ### 1. Backend
 
 ```bash
 cd demo-app-crud.Server
-dotnet run
+dotnet run --launch-profile https
 ```
 
 On first run the app **applies the EF Core migration** (creating `demo.db`) and **seeds** the demo data automatically. Swagger UI is available at `https://localhost:7152/swagger` (Development).
+
+> The `https` launch profile is required so the API listens on `https://localhost:7152`, which is the target the frontend dev-server proxy expects. Running plain `dotnet run` uses the `http` profile (`http://localhost:5123`) and the frontend proxy would not reach the API.
 
 ### 2. Frontend
 
